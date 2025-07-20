@@ -3,6 +3,7 @@
     "pages/login/Login",
     "pages/Index",
     "pages/register/Register",
-    "pages/chat/ChatPage"
+    "pages/chat/ChatPage",
+    "pages/AgentPage/AgentPage"
   ]
 }

@@ -2,32 +2,18 @@
 import router from '@ohos.router'
 import promptAction from '@ohos.promptAction'
 import axios, {AxiosResponse} from '@ohos/axios'
-import preferences, {Preferences} from '@ohos.data.preferences';
-import cryptoFramework from '@ohos.security.cryptoFramework';
-import InputField from '../../component/InputField'
-import PrimaryButton from '../../component/PrimaryButton'
+import InputField from '../../utils/InputField'
+import PrimaryButton from '../../utils/PrimaryButton'
 import { InputParams } from '../../params/InputParams'
 import { ButtonParams } from '../../params/ButtonParams'
 import { ResponseDao, IUserDao } from '../../params/APIModel'
 
-function encryptoPassword(password: string): string {
-    return encryptoPassword
-}
-
 @Entry
-@Component//声明这个是可复用的部件
+@Component
 struct LoginPage {
     @State email: string = ''
     @State password: string = ''
     @State showPassword: boolean = false
-    @State rememberMe: boolean = false
-    @State autoLogin: boolean = false
-
-    private accountPreferences: Preferences = preferences.getPreferences('account_info')
-
-    aboutToAppear(): void {
-        this.loadSaveAccount()
-    }
 
     build() {
         Column({ space: 20 }) {
@@ -71,11 +57,6 @@ struct LoginPage {
                         .width(20)
                         .height(20)
                         .onChange((isChecked: boolean) => {
-                            this.rememberMe = isChecked
-                            this.saveAccount()
-                            if (!isChecked) {
-                                this.autoLogin = false
-                            }
                             // 处理记住账号逻辑
                         })
 
@@ -84,15 +65,11 @@ struct LoginPage {
                         .fontColor('#666')
                     Blank('10')
 
-                    Checkbox({ name: 'autoLogin' })
+                    Checkbox({ name: 'rememberMe' })
                         .width(20)
                         .height(20)
                         .onChange((isChecked: boolean) => {
                             // 处理自动登录逻辑
-                            this.autoLogin = isChecked
-                            if (isChecked) {
-                                this.saveAccountInfo()
-                            }
                         })
 
                     Text('自动登录')
@@ -214,48 +191,5 @@ struct LoginPage {
         }).catch((error: Error) => {
             promptAction.showToast({ message: '网络请求失败：' + error.message })
         })
-        if (this.autoLogin) {
-            this.saveAccountInfo()
-        }
-    }
-
-    // 保存账户信息
-    saveAccountInfo() {
-        try {
-            if (this.rememberMe) {
-                this.accountPreferences.put('email', this.email)
-                this.accountPreferences.put('password', this.password)
-                this.accountPreferences.put('autoLogin', this.autoLogin)
-            } else {
-                // 清除存储数据
-                this.accountPreferences.delete('email')
-                this.accountPreferences.delete('password')
-                this.accountPreferences.delete('autoLogin')
-            }
-            this.accountPreferences.flush()
-        } catch (error) {
-            console.error('保存账户信息失败:', error)
-        }
-    }
-
-    // 读取存储的账户信息
-    loadSavedAccount() {
-        try {
-            this.email = this.accountPreferences.get('email', '')
-            this.password = this.accountPreferences.get('password', '')
-            this.rememberMe = this.email !== '' && this.password !== ''
-
-            // 仅当记住密码启用时读取自动登录状态
-            this.autoLogin = this.rememberMe
-                ? this.accountPreferences.get('autoLogin', false)
-                : false
-
-            // 如果启用自动登录，立即执行登录
-            if (this.autoLogin && this.email && this.password) {
-                this.onLogin()
-            }
-        } catch (error) {
-            console.error('读取账户信息失败:', error)
-        }
     }
 }
