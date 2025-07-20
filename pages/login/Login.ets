@@ -14,14 +14,15 @@ struct LoginPage {
     @State email: string = ''
     @State password: string = ''
     @State showPassword: boolean = false
+    @State avatar_path:string=''
 
     build() {
         Column({ space: 20 }) {
             // Logo 区域
-            Image($r('app.media.logo'))
+            Image($r('app.media.logologo'))
                 .width(100)
                 .height(100)
-                .margin({ bottom: 30 })
+                .margin({ bottom: 10,top:120 })
 
             // 表单区域
             Column({ space: 15 }) {
@@ -76,7 +77,6 @@ struct LoginPage {
                         .fontSize(12)
                         .fontColor('#666')
                 }
-                .margin({ top: 10 })
 
                 // 修复：改用对象属性赋值方式
                 PrimaryButton({
@@ -90,8 +90,11 @@ struct LoginPage {
                         }
                     } as ButtonParams,
                 })
+                    .width('65%')
+
             }
             .padding({ left: 20, right: 20 })
+            .width('90%')
 
             // 底部操作区域重构
             Column({ space: 20 }) {
@@ -124,6 +127,7 @@ struct LoginPage {
                 Divider()
                     .strokeWidth(1)
                     .color('#eee')
+                    .margin({top:60})
 
                 // 其他登录方式区域
                 Column({ space: 10 }) {
@@ -151,7 +155,6 @@ struct LoginPage {
                 }
                 .width('100%')
             }
-            .padding({ left: 20, right: 20, top: 10 })
 
         }
         .width('100%')
@@ -185,6 +188,7 @@ struct LoginPage {
             const data = res.data
             if (data.code == "S1") {
                 router.pushUrl({ url: 'pages/Index'})
+                console.log(JSON.stringify(data))
             } else {
                 promptAction.showToast({ message: data.message })
             }
