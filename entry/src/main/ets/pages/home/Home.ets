@@ -1,11 +1,13 @@
 import router from '@ohos.router'
 import ListChatItem, { ChatItemData } from '../../utils/ListChatItem'
 import WechatToolbar from '../../utils/WechatToolbar'
+import { AgentModel } from '../model/AgentModel'
 
 @Preview
 @Component
 export default struct Home {
     @State chatList: ChatItemData[] = [
+
         {
             headSrc: $r("app.media.ic_user_head2"),
             nickname: "老婆",
@@ -40,7 +42,36 @@ export default struct Home {
 
     build() {
         Column() {
-            WechatToolbar({ title: "微信(5)" })
+            WechatToolbar({ title: "微信(6)" })
+            // 添加智能体入口作为特殊功能区
+            Row() {
+                Image($r("app.media.ic_ai_agent"))
+                    .width(40)
+                    .height(40)
+                    .margin(10)
+                Column() {
+                    Text("我的智能体")
+                        .fontSize(16)
+                        .fontColor(Color.Black)
+                    Text("AI助手随时为您服务")
+                        .fontSize(12)
+                        .fontColor('#666')
+                }
+                .layoutWeight(1)
+            }
+            .width('100%')
+            .backgroundColor(Color.White)
+            .padding(5)
+            .onClick(() => {
+                const agent = new AgentModel(
+                    "https://www.coze.cn/store/agent/7528984685125861427?bot_id=true",
+                    "我的智能体"
+                );
+                router.pushUrl({
+                    url: 'pages/AgentPage/AgentPage',
+                    params: agent
+                })
+            })
 
             List() {
                 ForEach(this.chatList, (item: ChatItemData, index: number) => {
@@ -48,9 +79,25 @@ export default struct Home {
                         ListChatItem({ data: item })
                     }
                     .onClick(() => {
-                        router.pushUrl({ url: 'pages/chat/ChatPage',
-                            params: {name:item.nickname}
-                        })
+                        if (item.nickname === "我的智能体") {
+                            // 创建智能体对象
+                            const agent = new AgentModel(
+                                "https://www.coze.cn/store/agent/7528984685125861427?bot_id=true",
+                                "我的智能体"
+                            );
+
+                            // 跳转到智能体页面
+                            router.pushUrl({
+                                url: 'pages/AgentPage/AgentPage',
+                                params: agent
+                            })
+                        } else {
+                            // 普通聊天跳转
+                            router.pushUrl({
+                                url: 'pages/chat/ChatPage',
+                                params: {name:item.nickname}
+                            })
+                        }
                     })
                 })
                 ListItem() {
