@@ -1,6 +1,6 @@
 import router from '@ohos.router'
-import ListChatItem, { ChatItemData } from '../../utils/ListChatItem'
-import WechatToolbar from '../../utils/WechatToolbar'
+import ListChatItem, { ChatItemData } from '../../component/ListChatItem'
+import WechatToolbar from '../../component/WechatToolbar'
 
 @Preview
 @Component
@@ -40,7 +40,7 @@ export default struct Home {
 
     build() {
         Column() {
-            WechatToolbar({ title: "微信(5)" })
+            WechatToolbar({ title: "秘语(5)" })
 
             List() {
                 ForEach(this.chatList, (item: ChatItemData, index: number) => {
@@ -48,6 +48,7 @@ export default struct Home {
                         ListChatItem({ data: item })
                     }
                     .onClick(() => {
+                        console.log("aaaa")
                         router.pushUrl({ url: 'pages/chat/ChatPage',
                             params: {name:item.nickname}
                         })
