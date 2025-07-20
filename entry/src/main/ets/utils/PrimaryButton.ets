@@ -1,5 +1,5 @@
 // PrimaryButton.ets
-import { ButtonParams } from '../utils/ButtonParams'
+import { ButtonParams } from '../params/ButtonParams'
 
 @Component
 export default struct PrimaryButton {

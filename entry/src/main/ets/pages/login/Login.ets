@@ -1,15 +1,17 @@
-// ... existing code ...
+// ets/pages/login/Login.ets
 import router from '@ohos.router'
 import promptAction from '@ohos.promptAction'
+import axios, {AxiosResponse} from '@ohos/axios'
 import InputField from '../../utils/InputField'
 import PrimaryButton from '../../utils/PrimaryButton'
-import { InputParams } from '../../utils/Params'
-import { ButtonParams } from '../../utils/ButtonParams'
+import { InputParams } from '../../params/InputParams'
+import { ButtonParams } from '../../params/ButtonParams'
+import { ResponseDao, IUserDao } from '../../params/APIModel'
 
 @Entry
 @Component
 struct LoginPage {
-    @State username: string = ''
+    @State email: string = ''
     @State password: string = ''
     @State showPassword: boolean = false
 
@@ -26,10 +28,10 @@ struct LoginPage {
                 // 修复：改用对象属性赋值方式
                 InputField({
                     config: {
-                        placeholder: '请输入用户名',
-                        value: this.username,
+                        placeholder: '请输入邮箱',
+                        value: this.email,
                         onValueChange: (value: string) => {
-                            this.username = value
+                            this.email = value
                         },
                         icon: $r('app.media.icon_user')
                     } as InputParams
@@ -58,7 +60,19 @@ struct LoginPage {
                             // 处理记住账号逻辑
                         })
 
-                    Text('记住账号')
+                    Text('记住密码')
+                        .fontSize(12)
+                        .fontColor('#666')
+                    Blank('10')
+
+                    Checkbox({ name: 'rememberMe' })
+                        .width(20)
+                        .height(20)
+                        .onChange((isChecked: boolean) => {
+                            // 处理自动登录逻辑
+                        })
+
+                    Text('自动登录')
                         .fontSize(12)
                         .fontColor('#666')
                 }
@@ -70,7 +84,8 @@ struct LoginPage {
                         text: '登录',
                         onClickFlag: () => {
                             if (this.validateForm()) {
-                                router.pushUrl({ url: 'pages/Index' })
+                                // router.pushUrl({ url: 'pages/Index' })
+                                this.onLogin()
                             }
                         }
                     } as ButtonParams,
@@ -78,53 +93,66 @@ struct LoginPage {
             }
             .padding({ left: 20, right: 20 })
 
-            // 底部操作区域
-            Column({ space: 15 }) {
-                Text('忘记密码？')
-                    .fontSize(14)
-                    .fontColor('#57be6a')
-                    .onClick(() => {
-                        // 跳转到找回密码页面
-                    })
+            // 底部操作区域重构
+            Column({ space: 20 }) {
+                // 忘记密码与注册行
+                Row({ space: 15 }) {
+                    Text('忘记密码？')
+                        .fontSize(14)
+                        .fontColor('#57be6a')
+                        .onClick(() => {
+                            // 跳转到找回密码页面
+                        })
 
-                Column({ space: 15 }) {
-                    // 跳转到注册页面的文本
+                    // 右侧自动填充
+                    Blank()
+
+                    // 注册链接
                     Text('没有账号？去注册')
                         .fontColor('#57be6a')
                         .fontSize(14)
                         .onClick(() => {
-                            // 添加路由跳转逻辑
                             router.pushUrl({
-                                url: 'pages/register/Register' // 确保路径与 pages.json 中配置的路径一致
+                                url: 'pages/register/Register'
                             })
                         })
                 }
                 .width('100%')
-                // .alignItems(HorizontalAlign.Center)
+                .padding({ left: 20, right: 20 })
 
+                // 分割线
                 Divider()
                     .strokeWidth(1)
                     .color('#eee')
 
-                Row({ space: 15 }) {
+                // 其他登录方式区域
+                Column({ space: 10 }) {
                     Text('其他登录方式')
                         .fontSize(14)
                         .fontColor('#999')
+                        .width('100%')
+                        .textAlign(TextAlign.Center)
 
-                    Image($r('app.media.icon_wechat'))
-                        .width(30)
-                        .height(30)
-                        .objectFit(ImageFit.Contain)  // 保证图片完整显示
-                        // .margin({ right: 10 })      // 添加间距
-                    Image($r('app.media.icon_qq'))
-                        .width(30)
-                        .height(30)
-                        .objectFit(ImageFit.Contain)  // 保证图片完整显示
-                        // .margin({ right: 10 })      // 添加间距
-                        // .margin({ right: 10 })      // 添加间距
+                    // 图标行（居中对齐）
+                    Row({ space: 30 }) {
+                        Image($r('app.media.icon_wechat'))
+                            .width(40)
+                            .height(40)
+                            .objectFit(ImageFit.Contain)
+
+                        Image($r('app.media.icon_qq'))
+                            .width(40)
+                            .height(40)
+                            .objectFit(ImageFit.Contain)
+                    }
+                    .width('100%')
+                    .justifyContent(FlexAlign.Center)
+                    // .alignItems(A)
                 }
+                .width('100%')
             }
-            .padding({ left: 20, right: 20, top: 30 })
+            .padding({ left: 20, right: 20, top: 10 })
+
         }
         .width('100%')
         .height('100%')
@@ -133,8 +161,8 @@ struct LoginPage {
 
     // 表单验证
     validateForm(): boolean {
-        if (!this.username.trim()) {
-            promptAction.showToast({ message: '请输入用户名' })
+        if (!this.email.trim()) {
+            promptAction.showToast({ message: '请输入邮箱' })
             return false
         }
         if (!this.password.trim()) {
@@ -142,5 +170,26 @@ struct LoginPage {
             return false
         }
         return true
+    }
+
+    onLogin() {
+        const user: IUserDao = {
+            email: this.email,
+            password: this.password
+        }
+        axios({
+            method: "POST",
+            url: "http://47.109.74.84:9999/ddchat/index/login",
+            data: user
+        }).then(async (res: AxiosResponse<ResponseDao<IUserDao>>) => {
+            const data = res.data
+            if (data.code == "S1") {
+                router.pushUrl({ url: 'pages/Index'})
+            } else {
+                promptAction.showToast({ message: data.message })
+            }
+        }).catch((error: Error) => {
+            promptAction.showToast({ message: '网络请求失败：' + error.message })
+        })
     }
 }

@@ -1,5 +1,5 @@
 // ... existing code ...
-import { InputParams } from '../utils/Params'
+import { InputParams } from '../params/InputParams'
 
 @Component
 export default struct InputField {

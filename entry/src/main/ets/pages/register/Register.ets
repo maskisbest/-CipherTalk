@@ -2,8 +2,8 @@ import router from '@ohos.router'
 import promptAction from '@ohos.promptAction'
 import InputField from '../../utils/InputField'
 import PrimaryButton from '../../utils/PrimaryButton'
-import { InputParams } from '../../utils/Params'
-import { ButtonParams } from '../../utils/ButtonParams'
+import { InputParams } from '../../params/InputParams'
+import { ButtonParams } from '../../params/ButtonParams'
 import photoAccessHelper from '@ohos.file.photoAccessHelper';
 
 
