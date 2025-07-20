@@ -5,7 +5,7 @@ import router from '@ohos.router'
 import promptAction from '@ohos.promptAction'
 
 @Entry
-@Component
+@Component//声明这个是可复用的部件
 struct LoginPage {
     @State username: string = ''
     @State password: string = ''
