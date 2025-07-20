@@ -85,14 +85,13 @@ export default struct Home {
                         if (item.nickname === "我的智能体") {
                             // 创建智能体对象
                             const agent = new AgentModel(
-                                "https://www.coze.cn/store/agent/7528984685125861427?bot_id=true",
+                                "https://www.coze.cn/store/agent/7529065908355383315?bot_id=true",
                                 "我的智能体"
                             );
-
                             // 跳转到智能体页面
                             router.pushUrl({
                                 url: 'pages/AgentPage/AgentPage',
-                                params: agent
+                                params: {agent}
                             })
                         } else {
                             // 普通聊天跳转

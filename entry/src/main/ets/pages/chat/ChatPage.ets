@@ -13,6 +13,9 @@ import { AudioCaptureManager, RecordFile } from '../../utils/AudioCapturerManage
 import { componentUtils } from '@kit.ArkUI';
 import { vibrator } from '@kit.SensorServiceKit';
 import { PermissionUtils } from '../../utils/PermissionUtils';
+import { AgentModel } from '../model/AgentModel';
+import { AgentUtil } from '../../utils/AgentUtil'; // 新增工具类
+
 
 enum WXInputType {
   /**
@@ -104,6 +107,7 @@ export default struct ChatPage {
   private keyboardHeight: number = 0
   @State private funcBarHeight: number = 0;
   @State private showFuncBar: boolean = false;
+  @State showAgentButton: boolean = true;
   @State private dataList: ChatContentItemData[] = [
     {
       name: "鲁班",
@@ -326,9 +330,104 @@ export default struct ChatPage {
     //   插入到消息数组中
     this.chatList.push(TextChat)
   }
+  // 添加智能体处理函数
+  private async sendToAgent() {
+    // 构建聊天记录字符串
+    let chatHistory = "";
+    this.dataList.forEach(item => {
+      const sender = item.self ? "我" : "对方";
+      let content = item.msg;
+
+      // 处理图片消息
+      if (item.msgType === 1 && item.img) {
+        // 获取图片资源名称
+        const imgName = this.getResourceName(item.img);
+        content = `{${imgName}}`;
+      }
+
+      // 处理语音消息
+      if (item.msgType === 2 && item.voicePath) {
+        content = `[语音消息 ${item.msg}]`;
+      }
+
+      chatHistory += `"${sender}"：${content}\n`;
+    });
+
+    // 创建智能体对象
+    const agent = new AgentModel(
+      "https://www.coze.cn/store/agent/7529065908355383315?bot_id=true",
+      "智能助手"
+    );
+
+    // 显示加载状态
+    Toast.show("正在分析聊天记录...");
+
+    try {
+      // 调用智能体服务（这里需要您实现具体的网络请求）
+      const agentResponse = await AgentUtil.sendToAgent(agent, chatHistory, '123456789');
+      console.log(chatHistory)
+
+      // 添加智能体的回复
+      this.addAgentResponse(agentResponse);
+      // console.log(agentResponse)
+    } catch (error) {
+      Toast.show("智能体请求失败");
+      console.error("智能体请求失败:", error);
+    }
+  }
+
+  // 获取资源名称
+  private getResourceName(resource: Resource): string {
+    // 这里简化处理，实际应用中需要更完善的资源名称获取逻辑
+    if (resource === $r("app.media.ic_its_over")) return "app.media.ic_its_over";
+    if (resource === $r("app.media.ic_hahaha")) return "app.media.ic_hahaha";
+    return "未知图片";
+  }
+
+  // 添加智能体回复
+  private addAgentResponse(response: string) {
+    this.dataList.push({
+      name: "智能助手",
+      headSrc: $r("app.media.ic_ai_agent"), // 智能体图标
+      msgType: 0,
+      self: false,
+      msg: response
+    });
+
+    // 滚动到底部
+    this.scroller.scrollToIndex(this.dataList.length);
+  }
 
   build() {
     Column() {
+      // 修改工具栏，添加智能体按钮
+      Row() {
+        Image($r("app.media.ic_back")) // 返回按钮
+          .width(25)
+          .height(25)
+          .margin({ left: 10 })
+          .onClick(() => router.back())
+
+        Text(this.name)
+          .fontSize(20)
+          .fontColor(Color.Black)
+          .layoutWeight(1)
+          .textAlign(TextAlign.Center)
+
+        // 智能体按钮 - 仅在需要时显示
+        if (this.showAgentButton) {
+          Image($r("app.media.ic_ai_agent")) // 智能体图标
+            .width(25)
+            .height(25)
+            .margin({ right: 10 })
+            .onClick(() => this.sendToAgent())
+        }
+      }
+      .width('100%')
+      .height(50)
+      .backgroundColor('#f1f1f1')
+      .alignItems(VerticalAlign.Center)
+
       Toolbar({ title: this.name })
       List({ space: 20, initialIndex: this.dataList.length, scroller: this.scroller }) {
         ForEach(this.dataList, (item: ChatContentItemData) => {
