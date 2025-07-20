@@ -9,6 +9,9 @@
             },
             {
                 "name": "ohos.permission.READ_WRITE_USER_FILE"
+            },
+            {
+                "name": "ohos.permission.USE_KEYSTORE"
             }
         ],
         "name": "entry",
