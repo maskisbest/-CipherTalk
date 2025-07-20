@@ -1,7 +1,9 @@
 import router from '@ohos.router'
-import ListChatItem, { ChatItemData } from '../../utils/ListChatItem'
-import WechatToolbar from '../../utils/WechatToolbar'
+
 import { AgentModel } from '../model/AgentModel'
+import ListChatItem, { ChatItemData } from '../../component/ListChatItem'
+import WechatToolbar from '../../component/WechatToolbar'
+
 
 @Preview
 @Component
@@ -42,7 +44,7 @@ export default struct Home {
 
     build() {
         Column() {
-            WechatToolbar({ title: "微信(6)" })
+            WechatToolbar({ title: "秘语(5)" })
             // 添加智能体入口作为特殊功能区
             Row() {
                 Image($r("app.media.ic_ai_agent"))
@@ -72,6 +74,7 @@ export default struct Home {
                     params: agent
                 })
             })
+
 
             List() {
                 ForEach(this.chatList, (item: ChatItemData, index: number) => {
