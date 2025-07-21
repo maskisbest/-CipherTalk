@@ -191,10 +191,10 @@ struct Index {
                             this.coin('看一看',$r('app.media.pic3'))
                             this.coin('搜一搜',$r('app.media.pic4'))
                             Blank(10)
-                            this.coin('附近',$r('app.media.living'))
+                            this.coin('附近',$r('app.media.pic5'))
 
                             Blank(10)
-                            this.coin('小程序',$r('app.media.living'))
+                            this.coin('小程序',$r('app.media.pic6'))
                         }
                     }.height('100%')
                 }
