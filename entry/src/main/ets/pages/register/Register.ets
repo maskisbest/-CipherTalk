@@ -1,6 +1,7 @@
 import promptAction from '@ohos.promptAction'
 import InputField from '../../component/InputField'
 import PrimaryButton from '../../component/PrimaryButton'
+
 import { InputParams } from '../../params/InputParams'
 import { ButtonParams } from '../../params/ButtonParams'
 import photoAccessHelper from '@ohos.file.photoAccessHelper';
@@ -82,7 +83,7 @@ struct RegisterPage {
 
         Column({ space: 20 }) {
             Blank()
-                .height('3%')
+            .height('3%')
             // 整合后的头像上传与标题区域
             Column({ space: 15 }) {
                 // 标题区域
@@ -201,11 +202,12 @@ struct RegisterPage {
 
                         Blank(10)
 
-                        Radio({ value: '男', group: 'genderGroup' })
-                            .checked(this.gender === '')
+
+                        Radio({ value: '保密', group: 'genderGroup' })
+                            .checked(this.gender === '保密')
                             .onChange((isChecked: boolean) => {
                                 if (isChecked) {
-                                    this.gender = '男'
+                                    this.gender = '保密'
                                     this.gender_secret=true
                                 }
                             })
@@ -272,10 +274,6 @@ struct RegisterPage {
 
     //表单验证
     validateForm(): boolean {
-        if(!this.avatarPath.trim()){
-            promptAction.showToast({ message: '请上传头像' })
-            return false
-        }
         if (!this.nickname.trim()) {
             promptAction.showToast({ message: '请输入用户名' })
             return false
@@ -294,6 +292,11 @@ struct RegisterPage {
         }
         else if(!this.isValidEmail(this.email)){
             promptAction.showToast({ message: '邮箱格式错误' })
+            return false
+        }
+
+        if(!this.avatarPath.trim()){
+            promptAction.showToast({ message: '请上传头像' })
             return false
         }
         return true
@@ -333,6 +336,9 @@ struct RegisterPage {
 
     NetRequest(){
         const registerUrl = `${API_BASE_URL}/ddchat/index/register`;
+
+        if(this.gender=='保密')this.gender='男'
+
         const user:IUser={
             email:this.email,
             nickname:this.nickname,
@@ -351,6 +357,7 @@ struct RegisterPage {
                 AlertDialog.show(
                     {
                         message: '注册成功', // 对话框消息内容
+                        width:200,
                         primaryButton: {        // 主按钮配置
                             value: '确定',
                             action: () => {
@@ -360,6 +367,9 @@ struct RegisterPage {
                     }
                 )
                 router.back()
+            }
+            else {
+                promptAction.showToast({ message: res.data.message })
             }
         })
     }

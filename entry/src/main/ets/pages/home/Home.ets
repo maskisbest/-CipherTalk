@@ -82,6 +82,7 @@ export default struct Home {
                         ListChatItem({ data: item })
                     }
                     .onClick(() => {
+
                         if (item.nickname === "我的智能体") {
                             // 创建智能体对象
                             const agent = new AgentModel(
@@ -100,6 +101,7 @@ export default struct Home {
                                 params: {name:item.nickname}
                             })
                         }
+
                     })
                 })
                 ListItem() {

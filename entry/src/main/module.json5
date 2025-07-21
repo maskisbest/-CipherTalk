@@ -3,6 +3,7 @@
         "requestPermissions": [
             {
                 "name": "ohos.permission.INTERNET"
+
             },
             {
                 "name": "ohos.permission.READ_ACCESSIBILITY_CONFIG",
@@ -13,6 +14,9 @@
 //            {
 //                "name": "ohos.permission.USE_KEYSTORE"
 //            }
+
+
+
         ],
         "name": "entry",
         "type": "entry",

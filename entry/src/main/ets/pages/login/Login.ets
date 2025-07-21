@@ -6,9 +6,11 @@ import axios, {AxiosResponse} from '@ohos/axios'
 import cryptoFramework from '@ohos.security.cryptoFramework';
 import InputField from '../../component/InputField'
 import PrimaryButton from '../../component/PrimaryButton'
+
 import { InputParams } from '../../params/InputParams'
 import { ButtonParams } from '../../params/ButtonParams'
 import { ResponseDao, IUserDao } from '../../params/APIModel'
+
 
 // function encryptoPassword(password: string): string {
 //     return encryptoPassword
@@ -16,10 +18,12 @@ import { ResponseDao, IUserDao } from '../../params/APIModel'
 
 @Entry
 @Component//声明这个是可复用的部件
+
 struct LoginPage {
     @State email: string = ''
     @State password: string = ''
     @State showPassword: boolean = false
+
     @State rememberMe: boolean = false
     @State autoLogin: boolean = false
 
@@ -29,13 +33,15 @@ struct LoginPage {
     //     this.loadSaveAccount()
     // }
 
+
     build() {
         Column({ space: 20 }) {
             // Logo 区域
             Image($r('app.media.logo'))
                 .width(100)
                 .height(100)
-                .margin({ bottom: 30 })
+                .margin({ bottom: 10,top:120 })
+
 
             // 表单区域
             Column({ space: 15 }) {
@@ -76,6 +82,7 @@ struct LoginPage {
                             if (!isChecked) {
                                 this.autoLogin = false
                             }
+
                             // 处理记住账号逻辑
                         })
 
@@ -85,20 +92,24 @@ struct LoginPage {
                     Blank('10')
 
                     Checkbox({ name: 'autoLogin' })
+
                         .width(20)
                         .height(20)
                         .onChange((isChecked: boolean) => {
                             // 处理自动登录逻辑
+
                             this.autoLogin = isChecked
                             if (isChecked) {
                                 // this.saveAccountInfo()
                             }
+
                         })
 
                     Text('自动登录')
                         .fontSize(12)
                         .fontColor('#666')
                 }
+
                 .margin({ top: 10 })
 
                 // 修复：改用对象属性赋值方式
@@ -113,8 +124,13 @@ struct LoginPage {
                         }
                     } as ButtonParams,
                 })
+
+                    .width('65%')
+
             }
             .padding({ left: 20, right: 20 })
+            .width('90%')
+
 
             // 底部操作区域重构
             Column({ space: 20 }) {
@@ -147,6 +163,8 @@ struct LoginPage {
                 Divider()
                     .strokeWidth(1)
                     .color('#eee')
+                    .margin({top:60})
+
 
                 // 其他登录方式区域
                 Column({ space: 10 }) {
@@ -174,7 +192,6 @@ struct LoginPage {
                 }
                 .width('100%')
             }
-            .padding({ left: 20, right: 20, top: 10 })
 
         }
         .width('100%')
@@ -214,6 +231,7 @@ struct LoginPage {
         }).catch((error: Error) => {
             promptAction.showToast({ message: '网络请求失败：' + error.message })
         })
+
         if (this.autoLogin) {
             // this.saveAccountInfo()
         }
@@ -258,4 +276,5 @@ struct LoginPage {
     //         console.error('读取账户信息失败:', error)
     //     }
     // }
+
 }
