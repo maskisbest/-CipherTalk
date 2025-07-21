@@ -266,8 +266,8 @@ CipherTalk/
 ## 📞 联系我们
 
 - 项目作者：[您的姓名]
-- 邮箱：[your.email@example.com]
-- 项目链接：[https://github.com/your-username/CipherTalk]
+- 邮箱：[xzy1476569428@163.com]
+- 项目链接：[https://github.com/maskisbest/-CipherTalk]
 
 ---
 
